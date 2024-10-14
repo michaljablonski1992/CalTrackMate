@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Food, fetchFoodData } from '@/lib/api';
+import { fetchFoodData } from '@/lib/api';
+import { Food, useFoodContext } from '@/context/FoodContext';
 
-interface Props {
-  onAddFood: (food: Food) => void;
-}
-export default function FoodSearch({ onAddFood }: Props) {
+export default function FoodSearch() {
+  const foodCtx = useFoodContext();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Food[]>([]);
 
@@ -32,7 +31,7 @@ export default function FoodSearch({ onAddFood }: Props) {
             <span>
               {food.name} - {food.calories} cal
             </span>
-            <Button onClick={() => onAddFood(food)}>Add</Button>
+            <Button onClick={() => foodCtx.addFood(food)}>Add</Button>
           </li>
         ))}
       </ul>

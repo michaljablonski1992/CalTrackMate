@@ -1,14 +1,12 @@
-import { Food } from '@/lib/api';
+import { useFoodContext } from '@/context/FoodContext';
 
-interface NutritionSummaryProps {
-  foods: Food[];
-}
 
-export default function NutritionSummary({ foods }: NutritionSummaryProps) {
-  const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
-  const totalProtein = foods.reduce((sum, food) => sum + food.protein, 0);
-  const totalCarbs = foods.reduce((sum, food) => sum + food.carbs, 0);
-  const totalFat = foods.reduce((sum, food) => sum + food.fat, 0);
+export default function NutritionSummary() {
+  const foodCtx = useFoodContext();
+  const totalCalories = foodCtx.foods.reduce((sum, food) => sum + food.calories, 0);
+  const totalProtein = foodCtx.foods.reduce((sum, food) => sum + food.protein, 0);
+  const totalCarbs = foodCtx.foods.reduce((sum, food) => sum + food.carbs, 0);
+  const totalFat = foodCtx.foods.reduce((sum, food) => sum + food.fat, 0);
 
   return (
     <div>

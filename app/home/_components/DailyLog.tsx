@@ -1,14 +1,11 @@
-import React from 'react';
-import { Food } from '@/lib/api';
+import { useFoodContext } from '@/context/FoodContext';
 
-interface DailyLogProps {
-  foods: Food[];
-}
+export default function DailyLog() {
+  const foodCtx = useFoodContext();
 
-export default function DailyLog({ foods }: DailyLogProps) {
   return (
     <ul>
-      {foods.map((food, index) => (
+      {foodCtx.foods.map((food, index) => (
         <li key={index} className="mb-2">
           {food.name} - {food.calories} cal
         </li>

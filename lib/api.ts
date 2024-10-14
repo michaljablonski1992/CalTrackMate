@@ -1,11 +1,3 @@
-export interface Food {
-  id: number;
-  name: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
 export const fetchFoodData = async (query: string) => {
   return [
     { id: 1, name: 'Apple', calories: 95, protein: 0.5, carbs: 25, fat: 0.3 },
