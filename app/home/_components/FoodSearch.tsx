@@ -11,6 +11,7 @@ export default function FoodSearch() {
 
   const handleSearch = async () => {
     const data = await fetchFoodData(query);
+    console.log(data);
     setResults(data);
   };
 
@@ -26,7 +27,7 @@ export default function FoodSearch() {
         <Button onClick={handleSearch}>Search</Button>
       </div>
       <ul>
-        {results.map((food) => (
+        {results && results.map((food) => (
           <li key={food.id} className="flex justify-between items-center mb-2">
             <span>
               {food.name} - {food.calories} cal

@@ -1,6 +1,16 @@
-export const fetchFoodData = async (query: string) => {
-  return [
-    { id: 1, name: 'Apple', calories: 95, protein: 0.5, carbs: 25, fat: 0.3 },
-    { id: 2, name: 'Banana', calories: 105, protein: 1.3, carbs: 27, fat: 0.4 },
-  ];
-};
+export async function fetchFoodData(query: string): Promise<any> {
+  try {
+    const response = await fetch(`/api/fatsecret?query=${query}`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch from backend');
+    }
+
+    const data = await response.json();
+    console.log('Response from fatsecret API:', data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
