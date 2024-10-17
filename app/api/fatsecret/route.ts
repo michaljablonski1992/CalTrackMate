@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const query = searchParams.get('query'); // Example of query params
     const accessToken = await getAccessToken();
 
-    const response = await fetch(`https://platform.fatsecret.com/rest/foods/search/v3?format=json&search_expression=${query}`, {
+    const response = await fetch(`https://platform.fatsecret.com/rest/foods/search/v1?format=json&search_expression=${query}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

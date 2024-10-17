@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { fetchFoodData } from '@/lib/api';
-import { Food, useFoodContext } from '@/context/FoodContext';
+import { FatsecretFood, fetchFoodData } from '@/lib/fatsecret/api';
+import { useFoodContext } from '@/context/FoodContext';
 
 export default function FoodSearch() {
   const foodCtx = useFoodContext();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Food[]>([]);
+  const [results, setResults] = useState<FatsecretFood[]>([]);
 
   const handleSearch = async () => {
     const data = await fetchFoodData(query);
-    console.log(data);
     setResults(data);
   };
 
@@ -27,14 +26,18 @@ export default function FoodSearch() {
         <Button onClick={handleSearch}>Search</Button>
       </div>
       <ul>
-        {results && results.map((food) => (
-          <li key={food.id} className="flex justify-between items-center mb-2">
-            <span>
-              {food.name} - {food.calories} cal
-            </span>
-            <Button onClick={() => foodCtx.addFood(food)}>Add</Button>
-          </li>
-        ))}
+        {results &&
+          results.map((food) => (
+            <li
+              key={food.food_id}
+              className="flex justify-between items-center mb-2"
+            >
+              <span>
+                {food.food_name} - {food.food_description}
+              </span>
+              <Button onClick={() => foodCtx.addFood(food)}>Add</Button>
+            </li>
+          ))}
       </ul>
     </div>
   );

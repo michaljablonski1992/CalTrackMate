@@ -7,7 +7,7 @@ export default function DailyLog() {
     <ul>
       {foodCtx.foods.map((food, index) => (
         <li key={index} className="mb-2">
-          {food.name} - {food.calories} cal
+          {food.food_name} - {food.food_description}
         </li>
       ))}
     </ul>
