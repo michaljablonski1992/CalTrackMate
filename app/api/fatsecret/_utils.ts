@@ -12,7 +12,7 @@ async function requestNewAccessToken() {
   // Prepare URL-encoded form data
   const formData = new URLSearchParams({
     'grant_type': 'client_credentials',
-    'scope': 'basic',
+    'scope': 'premier',
   });
 
   // Send request to the OAuth token endpoint

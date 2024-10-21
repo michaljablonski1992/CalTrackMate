@@ -1,10 +1,9 @@
 import { createContext, useContext, useState, useCallback } from 'react';
-import { FatsecretFood } from '@/lib/fatsecret/api';
+import { FatsecretFood, FatsecretServing } from '@/lib/fatsecret/api';
 
 interface FoodContextType {
   foods: FatsecretFood[];
-  addFood: (food: FatsecretFood) => void;
-  transformFoodData: (food: FatsecretFood) => FatsecretFood;
+  addFood: (food: FatsecretFood, serving: FatsecretServing) => void;
 }
 
 export const FoodContext = createContext<FoodContextType | undefined>(undefined);
@@ -12,38 +11,38 @@ export const FoodContext = createContext<FoodContextType | undefined>(undefined)
 export function FoodProvider({ children }: { children: React.ReactNode }) {
   const [foods, setFoods] = useState<FatsecretFood[]>([]);
 
-  const transformFoodData = useCallback((food: FatsecretFood) => {
-    const description = food.food_description;
-    // Regular expressions to extract the metric and nutritional values
-    const metricMatch = description.match(/Per\s*(\d+(\.\d+)?)\s*(g|oz|fl\s*oz|cup|bottle|can|bar|pieces|slice|serving)/); // Matches "Per 101g", "Per 4 oz", etc.
-    const caloriesMatch = description.match(/Calories:\s*([\d.]+)kcal/);
-    const fatMatch = description.match(/Fat:\s*([\d.]+)g/);
-    const carbsMatch = description.match(/Carbs:\s*([\d.]+)g/);
-    const proteinMatch = description.match(/Protein:\s*([\d.]+)g/);
+  const addFood = useCallback((food: FatsecretFood, serving: FatsecretServing) => {
+    setFoods((prevFoods) => {
+      const newFoods: FatsecretFood[] = JSON.parse(JSON.stringify(prevFoods));
 
-    // Extract metric value and unit (e.g., "101g" or "4 oz")
-    const metricValue = metricMatch ? metricMatch[1] : ''; // Numeric value (e.g., '101')
-    const metricUnit = metricMatch ? metricMatch[3] : ''; // 'g' or 'oz'
-
-    // Extract the numeric values and return them in an object
-    food.metricValue = parseFloat(metricValue); // The metric value like '101' or '4'
-    food.metricUnit = metricUnit; // The metric like 'g' or 'oz'
-    food.calories = caloriesMatch ? parseFloat(caloriesMatch[1]) : 0
-    food.fat = fatMatch ? parseFloat(fatMatch[1]) : 0
-    food.carbs = carbsMatch ? parseFloat(carbsMatch[1]) : 0
-    food.protein = proteinMatch ? parseFloat(proteinMatch[1]) : 0
-
-    return food;
-  }, [])
-
-  const addFood = useCallback((food: FatsecretFood) => {
-    const foodWithData = transformFoodData(food);
-    setFoods((prevFoods) => [...prevFoods, foodWithData]);
-  }, [transformFoodData]);
+      // check if food exists
+      const existingFood = newFoods.find(exFood => exFood.food_id === food.food_id);
+      if(existingFood) { // if food exists
+        // check if serving exists
+        const existingServing = existingFood.servings.serving.find(exServ => exServ.serving_id === serving.serving_id);
+        if(existingServing) { // if serving exists - add quantity
+          existingServing.quantity ??= 0;
+          existingServing.quantity += 1;
+        } else { // if serving doesn't exist - add serving
+          serving.quantity ??= 1; 
+          existingFood.servings.serving.push(serving);
+        }
+        return newFoods; 
+      } else {  // if food doesn't exist - add food and serving
+        const newFood: FatsecretFood = JSON.parse(JSON.stringify(food));
+        const newServing: FatsecretServing = JSON.parse(JSON.stringify(serving));
+        newServing.quantity ??= 0;
+        newServing.quantity += 1;
+        newFood.servings.serving = [newServing]
+        newFoods.push(newFood);
+        return newFoods;
+      }
+    });
+  }, []);
 
 
   return (
-    <FoodContext.Provider value={{ foods, addFood, transformFoodData }}>
+    <FoodContext.Provider value={{ foods, addFood }}>
       {children}
     </FoodContext.Provider>
   );

@@ -1,20 +1,51 @@
 import { useFoodContext } from '@/context/FoodContext';
-
+import { FatsecretServingValues } from '@/lib/fatsecret/api';
+import { transformKeyToString } from '@/lib/utils';
 
 export default function NutritionSummary() {
   const foodCtx = useFoodContext();
-  const totalCalories = foodCtx.foods.reduce((sum, food) => sum + (food.calories ? food.calories : 0), 0);
-  const totalProtein = foodCtx.foods.reduce((sum, food) => sum + (food.protein ? food.protein : 0), 0);
-  const totalCarbs = foodCtx.foods.reduce((sum, food) => sum + (food.carbs ? food.carbs : 0), 0);
-  const totalFat = foodCtx.foods.reduce((sum, food) => sum + (food.fat ? food.fat : 0), 0);
+  // create empty values object
+  const values: FatsecretServingValues = {
+    calories: '',
+    carbohydrate: '',
+    protein: '',
+    fat: '',
+    saturated_fat: '',
+    polyunsaturated_fat: '',
+    monounsaturated_fat: '',
+    cholesterol: '',
+    sodium: '',
+    potassium: '',
+    fiber: '',
+    sugar: '',
+    vitamin_d: '',
+    vitamin_a: '',
+    vitamin_c: '',
+    calcium: '',
+    iron: '',
+  };
+
+  // using values object keys calculate for each key sum from all foods -> servings
+  Object.keys(values).forEach((key) => {
+    const sum = foodCtx.foods.reduce((food_sum, food) => {
+      const serving_sum = food.servings.serving.reduce(
+        (serving_sum, serving) => {
+          const serving_val = serving[key as keyof FatsecretServingValues];
+          return serving_sum + (serving_val ? (parseFloat(serving_val) * (serving.quantity || 1)) : 0);
+        },
+        0
+      );
+      return food_sum + serving_sum;
+    }, 0);
+
+    values[key as keyof FatsecretServingValues] = sum.toFixed(2);
+  });
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-2">Daily Totals</h3>
-      <p>Calories: {totalCalories.toFixed(1)}kcal</p>
-      <p>Protein: {totalProtein.toFixed(1)}g</p>
-      <p>Carbs: {totalCarbs.toFixed(1)}g</p>
-      <p>Fat: {totalFat.toFixed(1)}g</p>
+    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+      {Object.entries(values).map(([key, val]) => {
+        return <p key={key}>{transformKeyToString(key)}: {val}</p>;
+      })}
     </div>
   );
 }
