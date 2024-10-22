@@ -27,21 +27,21 @@ describe('FoodSearch Component', () => {
     (useFoodContext as jest.Mock).mockReturnValue({
       addFood: mockAddFood,
     });
-
-    // Mock fetchFoodData to return mock food data
-    (fetchFoodData as jest.Mock).mockResolvedValue(mockFoodData);
   });
 
-  it('should render the search input and button', () => {
+  it('should render the search input and button and initial no results message', () => {
     render(<FoodSearch />);
 
     expect(
       screen.getByPlaceholderText('Search for a food...')
     ).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
+    expect(screen.getByText('No results')).toBeInTheDocument();
   });
 
   it('should search for foods and display results', async () => {
+    // Mock fetchFoodData to return mock food data
+    (fetchFoodData as jest.Mock).mockResolvedValue(mockFoodData);
     render(<FoodSearch />);
 
     const input = screen.getByPlaceholderText('Search for a food...');
@@ -58,6 +58,9 @@ describe('FoodSearch Component', () => {
     await waitFor(() => {
       expect(fetchFoodData).toHaveBeenCalledWith('Butter');
     });
+
+    // expect 'no results' message doesn't exist
+    expect(screen.queryByText('No results')).not.toBeInTheDocument();
 
     // Check that the search results are displayed, but collapsed
     expect(
@@ -82,7 +85,33 @@ describe('FoodSearch Component', () => {
     expect(screen.queryByText('100 g')).not.toBeInTheDocument();
   });
 
+  it('should search for foods and display message when no results', async () => {
+    // Mock fetchFoodData to return mock food data
+    (fetchFoodData as jest.Mock).mockResolvedValue([]);
+    render(<FoodSearch />);
+
+    const input = screen.getByPlaceholderText('Search for a food...');
+    const searchButton = screen.getByText('Search');
+
+    // Simulate user typing in the input
+    fireEvent.change(input, { target: { value: 'Butter' } });
+    expect(input).toHaveValue('Butter');
+
+    // Simulate clicking the search button
+    fireEvent.click(searchButton);
+
+    // Wait for the mocked fetchFoodData call to resolve
+    await waitFor(() => {
+      expect(fetchFoodData).toHaveBeenCalledWith('Butter');
+    });
+
+    // expect 'no results' message exists
+    expect(screen.getByText('No results')).toBeInTheDocument();
+  });
+
   it('should call addFood when the "Add" button is clicked', async () => {
+    // Mock fetchFoodData to return mock food data
+    (fetchFoodData as jest.Mock).mockResolvedValue(mockFoodData);
     render(<FoodSearch />);
 
     const input = screen.getByPlaceholderText('Search for a food...');

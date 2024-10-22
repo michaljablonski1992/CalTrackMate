@@ -67,7 +67,9 @@ export async function fetchFoodData(query: string): Promise<any> {
     }
 
     const data: FatsecretResponse = await response.json();
-    return data.foods_search.results.food;
+    let results = data.foods_search?.results?.food;
+    results ??= []
+    return results;
   } catch (error) {
     console.error('Error:', error);
   }

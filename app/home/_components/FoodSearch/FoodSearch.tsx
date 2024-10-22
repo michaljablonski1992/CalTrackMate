@@ -4,8 +4,8 @@ import { Input } from '@/components/ui/input';
 import { FatsecretFood, fetchFoodData } from '@/lib/fatsecret/api';
 import FoodSearchResult from './FoodSearchResult';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { UtensilsCrossedIcon } from 'lucide-react';
+import { ScrollIcon, UtensilsCrossedIcon } from 'lucide-react';
+import CardWrapper from '@/components/shared/CardWrapper';
 
 export default function FoodSearch() {
   const [query, setQuery] = useState('');
@@ -17,14 +17,11 @@ export default function FoodSearch() {
   };
 
   return (
-    <Card className="w-full rounded-xl lg:row-span-4 lg:col-span-2">
-      <CardHeader className="lg:h-[7rem]">
-        <CardTitle className="text-primary">
-          <div className="flex items-center gap-2">
-            <UtensilsCrossedIcon className="size-5" />
-            Add Food
-          </div>
-        </CardTitle>
+    <CardWrapper
+      label="Add Food"
+      labelIcon={UtensilsCrossedIcon}
+      gridClasses="lg:row-span-4 lg:col-span-2"
+      titleContent={
         <div className="mt-4 flex space-x-2">
           <Input
             type="text"
@@ -34,19 +31,23 @@ export default function FoodSearch() {
           />
           <Button onClick={handleSearch}>Search</Button>
         </div>
-      </CardHeader>
-      <CardContent className="lg:h-[calc(100%-7rem)]">
-        <div className="grid gap-3 grid-flow-col lg:h-full h-96">
-          <ScrollArea>
-            <ul className="mx-2">
-              {results &&
-                results.map((food) => (
-                  <FoodSearchResult key={food.food_id} food={food} />
-                ))}
-            </ul>
-          </ScrollArea>
+      }
+    >
+      {results.length === 0 && (
+        <div className="flex items-center justify-center flex-col text-muted-foreground">
+          <p className="text-2xl">No results</p>
+          <ScrollIcon style={{ width: '4rem', height: '4rem' }} />
         </div>
-      </CardContent>
-    </Card>
+      )}
+      {results.length > 0 && (
+        <ScrollArea>
+          <ul className="mx-2">
+            {results.map((food) => (
+              <FoodSearchResult key={food.food_id} food={food} />
+            ))}
+          </ul>
+        </ScrollArea>
+      )}
+    </CardWrapper>
   );
 }

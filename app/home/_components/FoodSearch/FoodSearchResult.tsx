@@ -22,7 +22,7 @@ const FoodSearchResult = ({ food }: Props) => {
               return (
                 <li
                   key={serving.serving_id}
-                  className="ml-6 mb-2 flex justify-between items-center"
+                  className="ml-6 mb-2 flex justify-between items-center text-bold-muted"
                 >
                   {serving.serving_description}
                   <TooltipWrapper

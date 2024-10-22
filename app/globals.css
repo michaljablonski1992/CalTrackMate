@@ -10,6 +10,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.text-bold-muted {
+  @apply text-muted-foreground font-bold
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
