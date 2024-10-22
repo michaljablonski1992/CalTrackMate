@@ -1,32 +1,23 @@
 import CardWrapper from '@/components/shared/CardWrapper';
 import { useFoodContext } from '@/context/FoodContext';
-import { FatsecretServingValues } from '@/lib/fatsecret/api';
+import {
+  FatsecretServingValues,
+  servingValuesUnits,
+} from '@/lib/fatsecret/api';
 import { transformKeyToString } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { NotebookTextIcon } from 'lucide-react';
 
 export default function NutritionSummary() {
   const foodCtx = useFoodContext();
-  // create empty values object
-  const values: FatsecretServingValues = {
-    calories: '',
-    carbohydrate: '',
-    protein: '',
-    fat: '',
-    saturated_fat: '',
-    polyunsaturated_fat: '',
-    monounsaturated_fat: '',
-    cholesterol: '',
-    sodium: '',
-    potassium: '',
-    fiber: '',
-    sugar: '',
-    vitamin_d: '',
-    vitamin_a: '',
-    vitamin_c: '',
-    calcium: '',
-    iron: '',
-  };
+  // Create a new object with empty string values
+  const values = Object.keys(servingValuesUnits).reduce<Record<string, string>>(
+    (acc, key) => {
+      acc[key] = '';
+      return acc;
+    },
+    {}
+  );
 
   // using values object keys calculate for each key sum from all foods -> servings
   Object.keys(values).forEach((key) => {
@@ -60,7 +51,11 @@ export default function NutritionSummary() {
           {Object.entries(values).map(([key, val]) => {
             return (
               <p key={key}>
-                <span className='font-bold'>{transformKeyToString(key)}: </span><span className='text-bold-muted'>{val}</span>
+                <span className="font-bold">{transformKeyToString(key)}: </span>
+                <span className="text-bold-muted">
+                  {val}
+                  {servingValuesUnits[key as keyof FatsecretServingValues]}
+                </span>
               </p>
             );
           })}

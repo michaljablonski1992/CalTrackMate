@@ -17,17 +17,41 @@ export interface FatsecretServingValues {
   saturated_fat?: string;
   polyunsaturated_fat?: string;
   monounsaturated_fat?: string;
+  trans_fat?: string;
   cholesterol?: string;
   sodium?: string;
   potassium?: string;
   fiber?: string;
   sugar?: string;
+  added_sugars?: string;
   vitamin_d?: string;
   vitamin_a?: string;
   vitamin_c?: string;
   calcium?: string;
   iron?: string;
 }
+
+export const servingValuesUnits = {
+  calories: 'kcal',
+  carbohydrate: 'g',
+  protein: 'g',
+  fat: 'g',
+  saturated_fat: 'g',
+  polyunsaturated_fat: 'g',
+  monounsaturated_fat: 'g',
+  trans_fat: 'g',
+  cholesterol: 'mg',
+  sodium: 'mg',
+  sugar: 'g',
+  added_sugars: 'g',
+  vitamin_d: 'mg',
+  vitamin_a: 'µg',
+  vitamin_c: 'mg',
+  calcium: 'mg',
+  iron: 'mg',
+  potassium: 'mg',
+  fiber: 'g',
+};
 
 export interface FatsecretServing extends FatsecretServingValues {
   serving_id: string;
@@ -56,6 +80,16 @@ export interface FatsecretResponseData {
   page_number: number;
 };
 
+// helpers
+export function foodDisplayName(food: FatsecretFood){
+  const viewArr = [food.food_name];
+  if (food.brand_name) {
+    viewArr.push(food.brand_name);
+  }
+  return viewArr.join(' - ');
+}
+
+// get call
 export const MAX_RESULTS: number = 20;
 export async function fetchFoodData(query: string): Promise<any> {
   const response = await fetch(`/api/fatsecret?query=${query}&max_results=${MAX_RESULTS}`, {

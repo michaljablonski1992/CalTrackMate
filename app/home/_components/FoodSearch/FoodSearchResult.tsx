@@ -3,7 +3,7 @@ import { useFoodContext } from '@/context/FoodContext';
 import CollapsibleWrapper from '@/components/shared/CollapsibleWrapper';
 import TooltipWrapper from '@/components/shared/TooltipWrapper';
 import { BadgePlusIcon } from 'lucide-react';
-import { foodDisplayName } from '@/lib/utils';
+import { foodDisplayName } from '@/lib/fatsecret/api';
 
 interface Props {
   food: FatsecretFood;

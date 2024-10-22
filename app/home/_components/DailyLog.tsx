@@ -1,5 +1,5 @@
 import { useFoodContext } from '@/context/FoodContext';
-import { foodDisplayName } from '@/lib/utils';
+import { foodDisplayName } from '@/lib/fatsecret/api';
 import { FileClockIcon, ScrollIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CardWrapper from '@/components/shared/CardWrapper';

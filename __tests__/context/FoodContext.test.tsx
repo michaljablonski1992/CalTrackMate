@@ -1,8 +1,8 @@
-import { render, renderHook, screen } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { FoodProvider, useFoodContext } from '@/context/FoodContext';
-import { FatsecretFood, FatsecretFoodType } from '@/lib/fatsecret/api';
+import { FatsecretFoodType } from '@/lib/fatsecret/api';
 import { act } from 'react';
 import { mockFoodData } from '@/__tests__/mocks/_mockFoodData';
 
@@ -157,11 +157,13 @@ test('addFood transform data and add food to foods', () => {
     saturated_fat: '7.294',
     polyunsaturated_fat: '0.432',
     monounsaturated_fat: '2.985',
+    trans_fat: "0.12",
     cholesterol: '31',
     sodium: '2',
     potassium: '3',
     fiber: '0',
     sugar: '0.01',
+    added_sugars: "0.13",
     vitamin_a: '97',
     vitamin_c: '0.0',
     calcium: '3',
