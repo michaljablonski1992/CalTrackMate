@@ -35,7 +35,6 @@ describe('FoodSearch Component', () => {
     expect(
       screen.getByPlaceholderText('Search for a food...')
     ).toBeInTheDocument();
-    expect(screen.getByText('Search')).toBeInTheDocument();
     expect(screen.getByText('No results')).toBeInTheDocument();
   });
 
@@ -45,14 +44,10 @@ describe('FoodSearch Component', () => {
     render(<FoodSearch />);
 
     const input = screen.getByPlaceholderText('Search for a food...');
-    const searchButton = screen.getByText('Search');
 
     // Simulate user typing in the input
     fireEvent.change(input, { target: { value: 'Butter' } });
     expect(input).toHaveValue('Butter');
-
-    // Simulate clicking the search button
-    fireEvent.click(searchButton);
 
     // Wait for the mocked fetchFoodData call to resolve
     await waitFor(() => {
@@ -91,14 +86,10 @@ describe('FoodSearch Component', () => {
     render(<FoodSearch />);
 
     const input = screen.getByPlaceholderText('Search for a food...');
-    const searchButton = screen.getByText('Search');
 
     // Simulate user typing in the input
     fireEvent.change(input, { target: { value: 'Butter' } });
     expect(input).toHaveValue('Butter');
-
-    // Simulate clicking the search button
-    fireEvent.click(searchButton);
 
     // Wait for the mocked fetchFoodData call to resolve
     await waitFor(() => {
@@ -115,11 +106,9 @@ describe('FoodSearch Component', () => {
     render(<FoodSearch />);
 
     const input = screen.getByPlaceholderText('Search for a food...');
-    const searchButton = screen.getByText('Search');
 
     // Simulate user typing in the input
     fireEvent.change(input, { target: { value: 'Fat Milk' } });
-    fireEvent.click(searchButton);
 
     // Wait for the search results to load
     await waitFor(() => {

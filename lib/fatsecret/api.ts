@@ -56,21 +56,18 @@ export interface FatsecretResponseData {
   page_number: number;
 };
 
+export const MAX_RESULTS: number = 20;
 export async function fetchFoodData(query: string): Promise<any> {
-  try {
-    const response = await fetch(`/api/fatsecret?query=${query}`, {
-      method: 'GET',
-    });
+  const response = await fetch(`/api/fatsecret?query=${query}&max_results=${MAX_RESULTS}`, {
+    method: 'GET',
+  });
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch from backend');
-    }
-
-    const data: FatsecretResponse = await response.json();
-    let results = data.foods_search?.results?.food;
-    results ??= []
-    return results;
-  } catch (error) {
-    console.error('Error:', error);
+  if (!response.ok) {
+    throw new Error('Failed to fetch from backend');
   }
+
+  const data: FatsecretResponse = await response.json();
+  let results = data.foods_search?.results?.food;
+  results ??= []
+  return results;
 }
