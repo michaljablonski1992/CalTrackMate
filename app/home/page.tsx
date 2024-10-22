@@ -1,6 +1,5 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FoodSearch from './_components/FoodSearch/FoodSearch';
 import DailyLog from './_components/DailyLog';
 import NutritionSummary from './_components/NutritionSummary';
