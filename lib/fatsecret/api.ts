@@ -1,3 +1,4 @@
+//// TYPES / INTERFACES
 export interface FatsecretFood {
   food_id: string;
   food_name: string;
@@ -80,7 +81,12 @@ export interface FatsecretResponseData {
   page_number: number;
 };
 
-// helpers
+//// CONSTS
+export const INPUT_MAX_DECIMALS: number = 4;
+export const MAX_RESULTS: number = 20;
+
+
+//// HELPERS
 export function foodDisplayName(food: FatsecretFood){
   const viewArr = [food.food_name];
   if (food.brand_name) {
@@ -90,7 +96,6 @@ export function foodDisplayName(food: FatsecretFood){
 }
 
 // get call
-export const MAX_RESULTS: number = 20;
 export async function fetchFoodData(query: string): Promise<any> {
   const response = await fetch(`/api/fatsecret?query=${query}&max_results=${MAX_RESULTS}`, {
     method: 'GET',

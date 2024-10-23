@@ -35,7 +35,7 @@ test('addFood transform data and add food to foods', () => {
 
   // add first serving of first food to foods
   act(() => {
-    result.current.addFood(mockFood1!, mockServing1!);
+    result.current.addFood(mockFood1!, mockServing1!, 1);
   });
 
   // prepare expected data
@@ -76,20 +76,20 @@ test('addFood transform data and add food to foods', () => {
   expect(result.current.foods.length).toBe(1);
   expect(result.current.foods).toEqual([food1]);
 
-  // add the same food to foods
+  // add the same food to foods but with different quantity
   act(() => {
-    result.current.addFood(mockFood1!, mockServing1!);
+    result.current.addFood(mockFood1!, mockServing1!, 1.5);
   });
 
   // expect food1 added with 2x serving1 added
-  food1serving1.quantity = 2;
+  food1serving1.quantity = 2.5;
   expect(result.current.foods.length).toBe(1);
   expect(result.current.foods).toEqual([food1]);
 
   // now add another food with serving
   // add first serving of second food to foods
   act(() => {
-    result.current.addFood(mockFood2!, mockServing2!);
+    result.current.addFood(mockFood2!, mockServing2!, 1);
   });
 
   // prepare expected data
@@ -135,9 +135,9 @@ test('addFood transform data and add food to foods', () => {
   expect(result.current.foods.length).toBe(2);
   expect(result.current.foods).toEqual([food1, food2]);
 
-  // now add another serving for food2
+  // now add another serving for food2 but with different quantity
   act(() => {
-    result.current.addFood(mockFood2!, mockServing3!);
+    result.current.addFood(mockFood2!, mockServing3!, 3.85);
   });
 
   // prepare expected data
@@ -168,7 +168,7 @@ test('addFood transform data and add food to foods', () => {
     vitamin_c: '0.0',
     calcium: '3',
     iron: '0.00',
-    quantity: 1
+    quantity: 3.85
   };
   food2.servings.serving.push(food2serving2)
 

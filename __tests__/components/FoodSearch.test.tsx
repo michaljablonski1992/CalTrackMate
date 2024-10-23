@@ -132,6 +132,6 @@ describe('FoodSearch Component', () => {
     const calledServing = calledFood?.servings.serving.find(
       (d) => d.serving_description === '1 cup'
     );
-    expect(mockAddFood).toHaveBeenCalledWith(calledFood, calledServing);
+    expect(mockAddFood).toHaveBeenCalledWith(calledFood, calledServing, 1);
   });
 });

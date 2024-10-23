@@ -8,7 +8,7 @@ interface Props {
 }
 
 const CardInfo = ({ text, mode = 'normal', icon: InfoIcon, className }: Props) => {
-  const textColor = (mode === 'danger') ? 'text-orange-700' : 'text-muted-foreground'
+  const textColor = (mode === 'danger') ? 'text-destructive' : 'text-muted-foreground'
 
   return (
     <div className={`flex items-center justify-center flex-col ${textColor} ${className || ''}`}>

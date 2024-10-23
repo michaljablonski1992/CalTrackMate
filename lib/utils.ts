@@ -11,3 +11,7 @@ export function transformKeyToString(key: string): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+export function roundTo(num: number, decimals: number) {
+  return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
+}
