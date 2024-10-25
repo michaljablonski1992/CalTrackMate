@@ -18,6 +18,13 @@ export default function FoodSearch() {
     setQuery(formData.get('query') as string);
   };
 
+  // just to prevent enter -> controlled state initially
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission on Enter key
+    }
+  };
+
   return (
     <CardWrapper
       label="Add Food"
@@ -30,6 +37,7 @@ export default function FoodSearch() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
               placeholder="Search for a food..."
             />
           </div>
