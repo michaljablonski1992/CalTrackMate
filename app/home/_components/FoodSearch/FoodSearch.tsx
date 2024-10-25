@@ -52,7 +52,7 @@ export default function FoodSearch() {
             <CardInfo text="No results" icon={SearchXIcon} />
           )}
           {data.length > 0 && (
-            <ScrollArea>
+            <ScrollArea type='always'>
               <ul className="mx-2">
                 {data.map((food) => (
                   <FoodSearchResult key={food.food_id} food={food} />

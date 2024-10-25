@@ -18,7 +18,7 @@ export default function DailyLog() {
         <CardInfo text="There are no entries in log yet" icon={ScrollIcon} />
       )}
       {foodCtx.foods.length > 0 && (
-        <ScrollArea>
+        <ScrollArea type='always'>
           <ul className="list-disc ml-5">
             {foodCtx.foods.map((food, index) => (
               <li key={index} className="mb-2 items-center">

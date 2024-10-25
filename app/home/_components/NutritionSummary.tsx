@@ -46,7 +46,7 @@ export default function NutritionSummary() {
       labelIcon={NotebookTextIcon}
       gridClasses="lg:row-span-2 lg:col-span-4"
     >
-      <ScrollArea>
+      <ScrollArea type='always'>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Object.entries(values).map(([key, val]) => {
             return (
