@@ -1,4 +1,4 @@
-import { FatsecretFood, FatsecretResponse } from '@/lib/fatsecret/api';
+import { FatsecretFood } from '@/lib/fatsecret/api';
 import { useState, useEffect } from 'react';
 import { fetchFoodData } from '@/lib/fatsecret/api';
 
