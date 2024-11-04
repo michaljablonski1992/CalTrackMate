@@ -19,6 +19,11 @@ jest.mock('@/context/FoodContext', () => ({
   useFoodContext: jest.fn(),
 }));
 
+// Mock the Convex client and set up a dummy CONVEX_URL
+jest.mock('@/providers/ConvexClientProvider', () => ({
+  convexClient: {},
+}));
+
 describe('FoodSearch Component', () => {
   const mockAddFood = jest.fn();
 

@@ -1,0 +1,7 @@
+.centeredSpinner {
+  @apply flex items-center justify-center h-full w-full;
+}
+
+.spinnerIcon {
+  @apply w-24 h-24 text-muted-foreground animate-spin;
+}

@@ -15,3 +15,7 @@ export function transformKeyToString(key: string): string {
 export function roundTo(num: number, decimals: number) {
   return Math.round(num * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
+
+export function getCurrentDate() {
+  return new Date().toISOString().split('T')[0];
+}

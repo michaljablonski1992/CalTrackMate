@@ -1,16 +1,25 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { FatsecretFood, FatsecretServing, INPUT_MAX_DECIMALS } from '@/lib/fatsecret/api';
-import { roundTo } from '@/lib/utils';
+'use client';
 
-//// HELPERS
-function handleServingQty(serving: FatsecretServing, qty: number) {
-  serving.quantity ??= 0;
-  serving.quantity += qty;
-  serving.quantity = roundTo(serving.quantity, INPUT_MAX_DECIMALS);
-}
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from 'react';
+import {
+  FatsecretFood,
+  FatsecretServing,
+  INPUT_MAX_DECIMALS,
+} from '@/lib/fatsecret/api';
+import { roundTo, getCurrentDate } from '@/lib/utils';
+import { convexClient } from '@/providers/ConvexClientProvider';
+import { api } from '@/convex/_generated/api';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface FoodContextType {
   foods: FatsecretFood[];
+  foodsLoading: boolean,
   addFood: (
     food: FatsecretFood,
     serving: FatsecretServing,
@@ -25,48 +34,86 @@ export const FoodContext = createContext<FoodContextType | undefined>(
 export function FoodProvider({ children }: { children: React.ReactNode }) {
   const [foods, setFoods] = useState<FatsecretFood[]>([]);
 
+  // Use useQuery to fetch foods with loading and error state handling
+  const { data: foodsData, isLoading: foodsLoading } = useQuery({
+    queryKey: ['foods', getCurrentDate()],
+    queryFn: async () => {
+      return await convexClient.query(api.food.getAll, {
+        date: getCurrentDate(),
+      });
+    },
+    gcTime: Infinity
+  });
+
+  useEffect(() => {
+    if(foodsData) {
+      setFoods(foodsData);
+    }
+  }, [foodsData]);
+
+  // Mutation for upsert food to Convex
+  const upsertFood = useMutation({
+    mutationFn: async (food: FatsecretFood) => {
+      return convexClient.mutation(api.food.upsert, { food });
+    },
+    onError: (error) => {
+      console.error('Failed to sync with database:', error);
+    },
+  });
   const addFood = useCallback(
     (food: FatsecretFood, serving: FatsecretServing, qty: number = 1) => {
-      setFoods((prevFoods) => {
-        const newFoods: FatsecretFood[] = JSON.parse(JSON.stringify(prevFoods));
+      let updatedFood: FatsecretFood | null = null;
 
-        // check if food exists
-        const existingFood = newFoods.find(
-          (exFood) => exFood.food_id === food.food_id
-        );
+      setFoods((prevFoods) => {
+        const newFoods = JSON.parse(
+          JSON.stringify(prevFoods)
+        ) as FatsecretFood[];
+
+        const existingFood = newFoods.find((f) => f.food_id === food.food_id);
         if (existingFood) {
-          // if food exists
-          // check if serving exists
+          // food exists
           const existingServing = existingFood.servings.serving.find(
-            (exServ) => exServ.serving_id === serving.serving_id
+            (s) => s.serving_id === serving.serving_id
           );
           if (existingServing) {
-            // if serving exists - add quantity
-            handleServingQty(existingServing, qty);
+            // serving exists
+            existingServing.quantity = roundTo(
+              (existingServing.quantity ?? 0) + qty,
+              INPUT_MAX_DECIMALS
+            );
           } else {
-            // if serving doesn't exist - add serving
-            serving.quantity ??= qty;
-            existingFood.servings.serving.push(serving);
+            // serving doesn't exist
+            existingFood.servings.serving.push({ ...serving, quantity: qty });
           }
-          return newFoods;
+
+          updatedFood = existingFood;
         } else {
-          // if food doesn't exist - add food and serving
-          const newFood: FatsecretFood = JSON.parse(JSON.stringify(food));
-          const newServing: FatsecretServing = JSON.parse(
-            JSON.stringify(serving)
-          );
-          handleServingQty(newServing, qty);
-          newFood.servings.serving = [newServing];
+          // food doesn't exist
+          const newFood: FatsecretFood = {
+            ...food,
+            servings: {
+              serving: [
+                { ...serving, quantity: roundTo(qty, INPUT_MAX_DECIMALS) },
+              ],
+            },
+          };
           newFoods.push(newFood);
-          return newFoods;
+          updatedFood = newFood;
         }
+
+        return newFoods;
       });
+
+      // Sync the updated or new food with the database
+      if (updatedFood) {
+        upsertFood.mutate(updatedFood);
+      }
     },
     []
   );
 
   return (
-    <FoodContext.Provider value={{ foods, addFood }}>
+    <FoodContext.Provider value={{ foods, addFood, foodsLoading }}>
       {children}
     </FoodContext.Provider>
   );

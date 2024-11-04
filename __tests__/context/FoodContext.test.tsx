@@ -1,14 +1,27 @@
 import { renderHook } from '@testing-library/react';
 import '@testing-library/jest-dom';
-
 import { FoodProvider, useFoodContext } from '@/context/FoodContext';
 import { FatsecretFoodType } from '@/lib/fatsecret/api';
 import { act } from 'react';
 import { mockFoodData } from '@/__tests__/mocks/_mockFoodData';
+import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
+import { convexClient } from '@/providers/ConvexClientProvider';
+
+
+// Mock the Convex client and set up a dummy CONVEX_URL
+jest.mock('@/providers/ConvexClientProvider', () => ({
+  convexClient: {
+    mutation: jest.fn(),
+  },
+}));
+beforeEach(() => {
+  (convexClient.mutation as jest.Mock).mockReturnValue([]);
+});
+
 
 // wrapper for context and context itself
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <FoodProvider>{children}</FoodProvider>
+  <QueryClientProviderWrapper><FoodProvider>{children}</FoodProvider></QueryClientProviderWrapper>
 );
 
 //// TESTS

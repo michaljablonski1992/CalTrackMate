@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import FoodSearchResult from './FoodSearchResult';
@@ -7,8 +9,11 @@ import CardWrapper from '@/components/shared/CardWrapper';
 import { useFetchFoodData } from '@/hooks/useFetchFoodData';
 import CardInfo from '@/components/shared/CardInfo';
 import FoodSearchSkeleton from './FoodSearchSkeleton';
+import { useFoodContext } from '@/context/FoodContext';
+import Spinner from '@/components/shared/Spinner';
 
 export default function FoodSearch() {
+  const foodCtx = useFoodContext();
   const [query, setQuery] = useState('');
   const { data, loading, error } = useFetchFoodData(query);
 
@@ -31,34 +36,43 @@ export default function FoodSearch() {
       labelIcon={UtensilsCrossedIcon}
       gridClasses="lg:row-span-4 lg:col-span-2"
       titleContent={
-        <form onSubmit={handleSearch}>
-          <div className="mt-4 flex space-x-2">
-            <Input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyPress}
-              placeholder="Search for a food..."
-            />
-          </div>
-        </form>
+        !foodCtx.foodsLoading && (
+          <form onSubmit={handleSearch}>
+            <div className="mt-4 flex space-x-2">
+              <Input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Search for a food..."
+              />
+            </div>
+          </form>
+        )
       }
     >
-      {loading && <FoodSearchSkeleton />}
-      {!loading && error && <CardInfo text={error} icon={CircleXIcon} mode='danger' />}
-      {!loading && !error && (
+      {foodCtx.foodsLoading && <Spinner />}
+      {!foodCtx.foodsLoading && (
         <>
-          {data.length === 0 && (
-            <CardInfo text="No results" icon={SearchXIcon} />
+          {loading && <FoodSearchSkeleton />}
+          {!loading && error && (
+            <CardInfo text={error} icon={CircleXIcon} mode="danger" />
           )}
-          {data.length > 0 && (
-            <ScrollArea type='always'>
-              <ul className="mx-2">
-                {data.map((food) => (
-                  <FoodSearchResult key={food.food_id} food={food} />
-                ))}
-              </ul>
-            </ScrollArea>
+          {!loading && !error && (
+            <>
+              {data.length === 0 && (
+                <CardInfo text="No results" icon={SearchXIcon} />
+              )}
+              {data.length > 0 && (
+                <ScrollArea type="always">
+                  <ul className="mx-2">
+                    {data.map((food) => (
+                      <FoodSearchResult key={food.food_id} food={food} />
+                    ))}
+                  </ul>
+                </ScrollArea>
+              )}
+            </>
           )}
         </>
       )}

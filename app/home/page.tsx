@@ -1,5 +1,3 @@
-'use client';
-
 import FoodSearch from './_components/FoodSearch/FoodSearch';
 import DailyLog from './_components/DailyLog';
 import NutritionSummary from './_components/NutritionSummary';

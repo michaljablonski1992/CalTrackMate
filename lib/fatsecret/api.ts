@@ -69,6 +69,8 @@ export enum FatsecretFoodType {
   Brand = 'Brand',
   Generic = 'Generic',
 }
+// Convert enum values to literals
+export const FatsecretFoodTypeValues = Object.values(FatsecretFoodType);
 export interface FatsecretResponse {
   foods_search: FatsecretResponseData
 }

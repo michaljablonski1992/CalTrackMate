@@ -1,9 +1,12 @@
+'use client';
+
 import { useFoodContext } from '@/context/FoodContext';
 import { foodDisplayName } from '@/lib/fatsecret/api';
 import { FileClockIcon, ScrollIcon } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import CardWrapper from '@/components/shared/CardWrapper';
 import CardInfo from '@/components/shared/CardInfo';
+import Spinner from '@/components/shared/Spinner';
 
 export default function DailyLog() {
   const foodCtx = useFoodContext();
@@ -14,10 +17,11 @@ export default function DailyLog() {
       labelIcon={FileClockIcon}
       gridClasses="lg:col-span-4 lg:row-span-2"
     >
-      {foodCtx.foods.length === 0 && (
+      {foodCtx.foodsLoading && <Spinner />}
+      {!foodCtx.foodsLoading && foodCtx.foods.length === 0 && (
         <CardInfo text="There are no entries in log yet" icon={ScrollIcon} />
       )}
-      {foodCtx.foods.length > 0 && (
+      {!foodCtx.foodsLoading && foodCtx.foods.length > 0 && (
         <ScrollArea type='always'>
           <ul className="list-disc ml-5">
             {foodCtx.foods.map((food, index) => (
