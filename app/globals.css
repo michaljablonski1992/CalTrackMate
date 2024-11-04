@@ -32,6 +32,18 @@ body {
   @apply min-w-10 min-h-10 w-10 h-10;
 }
 
+/* no scroll when overflow */
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

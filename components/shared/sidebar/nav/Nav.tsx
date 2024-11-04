@@ -22,7 +22,7 @@ const Nav = ({ mode = Mods[0] }: Props) => {
   let cardClassName, navClassName, ulClassName;
   if (isMobile) {
     cardClassName =
-      'fixed bottom-4 w-[calc(100vw-32px)] flex items-center h-16 p-2 lg:hidden';
+      'fixed rounded-none rounded-t-lg bottom-0 left-0 right-0 flex items-center h-16 p-2 lg:hidden';
     navClassName = 'w-full';
     ulClassName = 'flex justify-evenly items-center';
   } else {
