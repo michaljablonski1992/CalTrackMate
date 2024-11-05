@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { type LucideIcon } from 'lucide-react';
 
 interface Props {
-  label: string;
+  label: React.ReactNode;
   labelIcon: LucideIcon;
   titleContent?: React.ReactNode;
   gridClasses: string;

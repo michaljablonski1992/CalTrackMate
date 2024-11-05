@@ -1,5 +1,5 @@
 import FoodSearch from './_components/FoodSearch/FoodSearch';
-import DailyLog from './_components/DailyLog';
+import DailyLog from './_components/DailyLog/DailyLog';
 import NutritionSummary from './_components/NutritionSummary';
 import { FoodProvider } from '@/context/FoodContext';
 

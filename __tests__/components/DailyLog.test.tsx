@@ -2,7 +2,7 @@
 
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import DailyLog from '@/app/home/_components/DailyLog'
+import DailyLog from '@/app/home/_components/DailyLog/DailyLog'
 import { useFoodContext } from '@/context/FoodContext';
 import { mockAddedFoodsData } from '@/__tests__/mocks/_mockFoodData';
 

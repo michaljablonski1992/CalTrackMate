@@ -7,13 +7,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import CardWrapper from '@/components/shared/CardWrapper';
 import CardInfo from '@/components/shared/CardInfo';
 import Spinner from '@/components/shared/Spinner';
+import DailyLogLabel from './DailyLogLabel';
 
 export default function DailyLog() {
   const foodCtx = useFoodContext();
 
   return (
     <CardWrapper
-      label="Daily Log"
+      label={<DailyLogLabel />}
       labelIcon={FileClockIcon}
       gridClasses="lg:col-span-4 lg:row-span-2"
     >

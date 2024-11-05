@@ -1,11 +1,11 @@
 import { mutation, query } from './_generated/server';
 import { FatsecretFood } from '../lib/fatsecret/api';
 import { getUserByClerkId } from './_utils';
-import { getCurrentDate } from '../lib/utils';
-import { ConvexError, v } from 'convex/values';
+import { getTodayDate } from '../lib/utils';
+import { ConvexError } from 'convex/values';
 
 export const upsert = mutation(
-  async (ctx, { food }: { food: FatsecretFood }) => {
+  async (ctx, { food, date }: { food: FatsecretFood, date?: string }) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) throw new ConvexError('User not authenticated');
     // get current user from convex
@@ -13,7 +13,7 @@ export const upsert = mutation(
     if (!currentUser) throw new ConvexError('User not found');
 
     // Use today's date if not specified
-    const date = getCurrentDate();
+    date ??= getTodayDate();
 
     // Check if a food item exists
     const existingFood = await ctx.db
@@ -51,13 +51,14 @@ export const getAll = query(
     const currentUser = await getUserByClerkId(ctx, user.subject);
     if (!currentUser) throw new ConvexError('User not found');
 
-    const foodDate = date || getCurrentDate();
+    // Use today's date if not specified
+    date ??= getTodayDate();
 
     const foods: FatsecretFood[] = await ctx.db
       .query('foods')
       .filter((q) =>
         q.and(
-          q.eq(q.field('date'), foodDate),
+          q.eq(q.field('date'), date),
           q.eq(q.field('user_id'), currentUser._id)
         )
       )

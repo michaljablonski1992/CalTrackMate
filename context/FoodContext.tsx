@@ -19,12 +19,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface FoodContextType {
   foods: FatsecretFood[];
-  foodsLoading: boolean,
+  foodsLoading: boolean;
   addFood: (
     food: FatsecretFood,
     serving: FatsecretServing,
     qty: number
   ) => void;
+  currentDate: string;
+  setCurrentDate: (date: string) => void;
 }
 
 export const FoodContext = createContext<FoodContextType | undefined>(
@@ -33,20 +35,21 @@ export const FoodContext = createContext<FoodContextType | undefined>(
 
 export function FoodProvider({ children }: { children: React.ReactNode }) {
   const [foods, setFoods] = useState<FatsecretFood[]>([]);
+  const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
 
   // Use useQuery to fetch foods with loading and error state handling
   const { data: foodsData, isLoading: foodsLoading } = useQuery({
-    queryKey: ['foods', getCurrentDate()],
+    queryKey: ['foods', currentDate],
     queryFn: async () => {
       return await convexClient.query(api.food.getAll, {
-        date: getCurrentDate(),
+        date: currentDate,
       });
     },
-    gcTime: Infinity
+    gcTime: Infinity,
   });
 
   useEffect(() => {
-    if(foodsData) {
+    if (foodsData) {
       setFoods(foodsData);
     }
   }, [foodsData]);
@@ -54,7 +57,10 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
   // Mutation for upsert food to Convex
   const upsertFood = useMutation({
     mutationFn: async (food: FatsecretFood) => {
-      return convexClient.mutation(api.food.upsert, { food });
+      return convexClient.mutation(api.food.upsert, {
+        food,
+        date: currentDate,
+      });
     },
     onError: (error) => {
       console.error('Failed to sync with database:', error);
@@ -109,14 +115,23 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
         upsertFood.mutate(updatedFood);
       }
     },
-    []
+    [upsertFood]
   );
 
-  return (
-    <FoodContext.Provider value={{ foods, addFood, foodsLoading }}>
-      {children}
-    </FoodContext.Provider>
-  );
+  const handleSetCurrentDate = (date: string) => {
+    localStorage.setItem('currentDate', date);
+    setCurrentDate(date);
+  }
+
+  const value = {
+    foods,
+    addFood,
+    foodsLoading,
+    setCurrentDate: handleSetCurrentDate,
+    currentDate,
+  };
+
+  return <FoodContext.Provider value={value}>{children}</FoodContext.Provider>;
 }
 
 export function useFoodContext() {
