@@ -40,6 +40,8 @@ export function DatePicker() {
           mode="single"
           selected={date}
           onSelect={handleOnSelect}
+          showOutsideDays={false}
+          defaultMonth={date}
           initialFocus
         />
       </PopoverContent>
