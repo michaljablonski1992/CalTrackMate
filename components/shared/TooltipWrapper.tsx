@@ -11,13 +11,20 @@ export enum TooltipWrapperMods {
 }
 export enum TooltipWrapperTypes {
   Info = 'Info', // Info - default behaviou
-  Error = 'Error', // Error - different styling and side
+  Danger = 'Danger', // Error - different styling and side
+}
+export enum TooltipWrapperSides {
+  Top = 'top',
+  Right = 'right',
+  Bottom = 'bottom',
+  Left = 'left'
 }
 interface Props {
   mode?: TooltipWrapperMods;
   type?: TooltipWrapperTypes;
   tooltipContent: React.ReactNode;
   open?: boolean;
+  side?: TooltipWrapperSides;
   children: React.ReactNode;
 }
 
@@ -26,12 +33,11 @@ const TooltipWrapper = ({
   type = TooltipWrapperTypes.Info,
   tooltipContent,
   open,
+  side = TooltipWrapperSides.Top,
   children,
 }: Props) => {
-  let side: 'top' | 'right' | 'bottom' | 'left' = 'top';
   let className;
-  if (type === TooltipWrapperTypes.Error) {
-    side = 'right';
+  if (type === TooltipWrapperTypes.Danger) {
     className = 'text-destructive bg-destructive-foreground';
   }
 

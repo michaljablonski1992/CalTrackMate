@@ -4,6 +4,7 @@ import CollapsibleWrapper from '@/components/shared/CollapsibleWrapper';
 import TooltipWrapper, {
   TooltipWrapperMods,
   TooltipWrapperTypes,
+  TooltipWrapperSides
 } from '@/components/shared/TooltipWrapper';
 import { BadgePlusIcon } from 'lucide-react';
 import { foodDisplayName, INPUT_MAX_DECIMALS } from '@/lib/fatsecret/api';
@@ -99,7 +100,8 @@ const FoodSearchResultServing = ({
           x
           <TooltipWrapper
             mode={TooltipWrapperMods.Manual}
-            type={TooltipWrapperTypes.Error}
+            type={TooltipWrapperTypes.Danger}
+            side={TooltipWrapperSides.Right}
             tooltipContent={qtyError}
             open={!!qtyError}
           >
