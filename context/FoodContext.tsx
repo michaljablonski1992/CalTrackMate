@@ -23,7 +23,8 @@ interface FoodContextType {
   addFood: (
     food: FatsecretFood,
     serving: FatsecretServing,
-    qty: number
+    qty: number,
+    setQty?: boolean
   ) => void;
   removeFood: (food: FatsecretFood, serving?: FatsecretServing) => void;
   currentDate: string;
@@ -74,7 +75,13 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
     },
   });
   const addFood = useCallback(
-    (food: FatsecretFood, serving: FatsecretServing, qty: number = 1) => {
+    // setQty flag - false => add 'qty' value to quantity / true => replace quantity by 'qty'
+    (
+      food: FatsecretFood,
+      serving: FatsecretServing,
+      qty: number = 1,
+      setQty?: boolean
+    ) => {
       let updatedFood: FatsecretFood | null = null;
 
       setFoods((prevFoods) => {
@@ -96,10 +103,12 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
 
           if (existingServing) {
             // Serving exists: update its quantity
-            existingServing.quantity = roundTo(
-              (existingServing.quantity ?? 0) + qty,
-              INPUT_MAX_DECIMALS
-            );
+            existingServing.quantity = setQty
+              ? roundTo(qty, INPUT_MAX_DECIMALS)
+              : roundTo(
+                  (existingServing.quantity ?? 0) + qty,
+                  INPUT_MAX_DECIMALS
+                );
           } else {
             // Serving doesn't exist: add a new one
             existingFood.servings.serving.push({ ...serving, quantity: qty });
