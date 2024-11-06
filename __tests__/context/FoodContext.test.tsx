@@ -1,17 +1,20 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { FoodProvider, useFoodContext } from '@/context/FoodContext';
 import { FatsecretFoodType } from '@/lib/fatsecret/api';
 import { act } from 'react';
-import { mockFoodData } from '@/__tests__/mocks/_mockFoodData';
-import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
+import {
+  mockAddedFoodsData,
+  mockAddedFoodsData1,
+  mockFoodData,
+} from '@/__tests__/mocks/_mockFoodData';
 import { convexClient } from '@/providers/ConvexClientProvider';
+import QueryClientProviderWrapper from '@/providers/QueryClientProviderWrapper';
 
-
-// Mock the Convex client and set up a dummy CONVEX_URL
 jest.mock('@/providers/ConvexClientProvider', () => ({
   convexClient: {
     mutation: jest.fn(),
+    query: jest.fn(() => Promise.resolve({ data: [] })),
   },
 }));
 beforeEach(() => {
@@ -21,11 +24,13 @@ beforeEach(() => {
 
 // wrapper for context and context itself
 const wrapper = ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProviderWrapper><FoodProvider>{children}</FoodProvider></QueryClientProviderWrapper>
+  <QueryClientProviderWrapper>
+    <FoodProvider>{children}</FoodProvider>
+  </QueryClientProviderWrapper>
 );
 
 //// TESTS
-test('addFood transform data and add food to foods', () => {
+test('addFood adds food to foods', () => {
   const { result } = renderHook(() => useFoodContext(), { wrapper });
 
   // empty initially
@@ -170,22 +175,95 @@ test('addFood transform data and add food to foods', () => {
     saturated_fat: '7.294',
     polyunsaturated_fat: '0.432',
     monounsaturated_fat: '2.985',
-    trans_fat: "0.12",
+    trans_fat: '0.12',
     cholesterol: '31',
     sodium: '2',
     potassium: '3',
     fiber: '0',
     sugar: '0.01',
-    added_sugars: "0.13",
+    added_sugars: '0.13',
     vitamin_a: '97',
     vitamin_c: '0.0',
     calcium: '3',
     iron: '0.00',
-    quantity: 3.85
+    quantity: 3.85,
   };
-  food2.servings.serving.push(food2serving2)
+  food2.servings.serving.push(food2serving2);
 
   // expect food2 added with serving1 and serving2
   expect(result.current.foods.length).toBe(2);
   expect(result.current.foods).toEqual([food1, food2]);
+});
+
+test('removeFood removes food from foods', async () => {
+  (convexClient.query as jest.Mock).mockReturnValue(mockAddedFoodsData);
+  // Mock the return value of useFoodContext to provide the mock foods
+  const { result } = renderHook(() => useFoodContext(), { wrapper });
+
+  // Wait for `setFoods` to update with mockFoodsData
+  await waitFor(() => {
+    expect(result.current.foods.length).toEqual(mockAddedFoodsData.length);
+  });
+
+  // Remove food
+  act(() => {
+    result.current.removeFood(mockAddedFoodsData1);
+  });
+
+  // Expect food removed
+  expect(result.current.foods.length).toEqual(mockAddedFoodsData.length - 1);
+  expect(result.current.foods).not.toEqual(expect.arrayContaining([mockAddedFoodsData1]));
+});
+
+test('removeFood removes serving from foods', async () => {
+  (convexClient.query as jest.Mock).mockReturnValue(mockAddedFoodsData);
+  // Mock the return value of useFoodContext to provide the mock foods
+  const { result } = renderHook(() => useFoodContext(), { wrapper });
+
+  // Wait for `setFoods` to update with mockFoodsData
+  await waitFor(() => {
+    expect(result.current.foods.length).toEqual(mockAddedFoodsData.length);
+  });
+
+  // Get current servings count
+  const servingsCount = mockAddedFoodsData1.servings.serving.length
+
+  // Get serving to be removed
+  const serving = mockAddedFoodsData1.servings.serving[0]
+
+  // Remove food
+  act(() => {
+    result.current.removeFood(mockAddedFoodsData1, serving);
+  });
+
+  // Expect food not removed
+  expect(result.current.foods.length).toEqual(mockAddedFoodsData.length);
+
+  // Expect serving removed
+  const currentFood = result.current.foods.find(f => f.food_id === mockAddedFoodsData1.food_id);
+  expect(currentFood?.servings.serving.length).toEqual(servingsCount - 1);
+  expect(currentFood?.servings.serving).not.toEqual(expect.arrayContaining([serving]));
+});
+
+
+test('removeFood removes food if all servings all removed', async () => {
+  (convexClient.query as jest.Mock).mockReturnValue(mockAddedFoodsData);
+  // Mock the return value of useFoodContext to provide the mock foods
+  const { result } = renderHook(() => useFoodContext(), { wrapper });
+
+  // Wait for `setFoods` to update with mockFoodsData
+  await waitFor(() => {
+    expect(result.current.foods.length).toEqual(mockAddedFoodsData.length);
+  });
+
+  // Remove food
+  act(() => {
+    mockAddedFoodsData1.servings.serving.forEach(serving => {
+      result.current.removeFood(mockAddedFoodsData1, serving);
+    })
+  });
+
+  // Expect food removed
+  expect(result.current.foods.length).toEqual(mockAddedFoodsData.length - 1);
+  expect(result.current.foods).not.toEqual(expect.arrayContaining([mockAddedFoodsData1]));
 });
