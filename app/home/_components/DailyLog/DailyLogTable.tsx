@@ -6,45 +6,42 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  FatsecretFood,
-  FatsecretServing,
-} from '@/lib/fatsecret/api';
+import { FatsecretFood, FatsecretServing } from '@/lib/fatsecret/api';
 import DailyLogRemoveIcon from './DailyLogRemoveIcon';
-import DailyLogServingEditIcon from './DailyLogServingEditIcon';
 import { Fragment } from 'react';
+import ServingQtyInput, {
+  MODS as QTY_INPUT_MODS,
+} from '../shared/ServingQtyInput';
+import { useFoodContext } from '@/context/FoodContext';
 
 interface Props {
-  foods: FatsecretFood[];
   removeRecordClickHandler: (
     food: FatsecretFood,
     serving?: FatsecretServing
   ) => void;
 }
 
-const DailyLogTable = ({ foods, removeRecordClickHandler }: Props) => {
+const DailyLogTable = ({ removeRecordClickHandler }: Props) => {
+  const foodCtx = useFoodContext();
+
   return (
-    <Table aria-label='Foods table'>
+    <Table aria-label="Foods table">
       <TableHeader>
         <TableRow>
           <TableHead className='w-96'>Name</TableHead>
-          <TableHead className='w-96'>Brand</TableHead>
-          <TableHead className='text-center'>Quantity</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>Brand</TableHead>
+          <TableHead className='w-48'>Quantity</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {foods.map((food) => (
+        {foodCtx.foods.map((food) => (
           <Fragment key={food.food_id}>
             <TableRow>
-              <TableCell className="font-semibold">
-                {food.food_name}
-              </TableCell>
-              <TableCell className="font-semibold">
-                {food.brand_name}
-              </TableCell>
+              <TableCell className="font-semibold">{food.food_name}</TableCell>
+              <TableCell className="font-semibold">{food.brand_name}</TableCell>
               <TableCell></TableCell>
-              <TableCell>
+              <TableCell className="text-right pr-6">
                 <DailyLogRemoveIcon
                   ariaLabel="Remove food"
                   className="w-6 h-6"
@@ -55,27 +52,25 @@ const DailyLogTable = ({ foods, removeRecordClickHandler }: Props) => {
             {food.servings.serving.map((serving) => {
               return (
                 <TableRow key={serving.serving_id}>
-                  <TableCell className="font-medium pl-16">
+                  <TableCell className="font-medium pl-12">
                     {serving.serving_description}
                   </TableCell>
                   <TableCell></TableCell>
-                  <TableCell className='text-center'>{serving.quantity}</TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
-                      <DailyLogServingEditIcon
-                        className="w-6 h-6"
-                        onClickHandler={() => {
-                          console.log('will edit');
-                        }}
-                      />
-                      <DailyLogRemoveIcon
-                        ariaLabel="Remove serving"
-                        className="w-6 h-6"
-                        onClickHandler={() =>
-                          removeRecordClickHandler(food, serving)
-                        }
-                      />
-                    </div>
+                    <ServingQtyInput
+                      food={food}
+                      serving={serving}
+                      mode={QTY_INPUT_MODS.EDIT}
+                    />
+                  </TableCell>
+                  <TableCell className="text-right pr-6">
+                    <DailyLogRemoveIcon
+                      ariaLabel="Remove serving"
+                      className="w-6 h-6"
+                      onClickHandler={() =>
+                        removeRecordClickHandler(food, serving)
+                      }
+                    />
                   </TableCell>
                 </TableRow>
               );

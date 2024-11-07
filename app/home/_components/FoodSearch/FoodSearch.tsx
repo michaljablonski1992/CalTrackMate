@@ -36,7 +36,7 @@ export default function FoodSearch() {
       labelIcon={UtensilsCrossedIcon}
       gridClasses="lg:row-span-4 lg:col-span-2"
       titleContent={
-        !foodCtx.foodsLoading && (
+        !foodCtx.foodFetching && (
           <form onSubmit={handleSearch}>
             <div className="mt-4 flex space-x-2">
               <Input
@@ -51,8 +51,8 @@ export default function FoodSearch() {
         )
       }
     >
-      {foodCtx.foodsLoading && <Spinner />}
-      {!foodCtx.foodsLoading && (
+      {foodCtx.foodFetching && <Spinner />}
+      {!foodCtx.foodFetching && (
         <>
           {loading && <FoodSearchSkeleton />}
           {!loading && error && (

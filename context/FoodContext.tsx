@@ -19,7 +19,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 interface FoodContextType {
   foods: FatsecretFood[];
-  foodsLoading: boolean;
+  foodFetching: boolean;
   addFood: (
     food: FatsecretFood,
     serving: FatsecretServing,
@@ -46,7 +46,7 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
   const [currentDate, setCurrentDate] = useState<string>(getCurrentDate());
 
   // Use useQuery to fetch foods with loading and error state handling
-  const { data: foodsData, isLoading: foodsLoading } = useQuery({
+  const { data: foodsData, isFetching: foodFetching } = useQuery({
     queryKey: ['foods', currentDate],
     queryFn: async () => {
       return await convexClient.query(api.food.getAll, {
@@ -218,7 +218,7 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
   const value = {
     foods,
     addFood,
-    foodsLoading,
+    foodFetching,
     setCurrentDate: handleSetCurrentDate,
     currentDate,
     removeFood,

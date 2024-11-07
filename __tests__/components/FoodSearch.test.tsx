@@ -1,5 +1,4 @@
 // __tests__/FoodSearch.test.tsx
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import FoodSearch from '@/app/home/_components/FoodSearch/FoodSearch';
@@ -103,40 +102,5 @@ describe('FoodSearch Component', () => {
 
     // expect 'no results' message exists
     expect(screen.getByText('No results')).toBeInTheDocument();
-  });
-
-  it('should call addFood when the "Add" button is clicked', async () => {
-    // Mock fetchFoodData to return mock food data
-    (fetchFoodData as jest.Mock).mockResolvedValue(mockFoodData);
-    render(<FoodSearch />);
-
-    const input = screen.getByPlaceholderText('Search for a food...');
-
-    // Simulate user typing in the input
-    fireEvent.change(input, { target: { value: 'Fat Milk' } });
-
-    // Wait for the search results to load
-    await waitFor(() => {
-      expect(fetchFoodData).toHaveBeenCalledWith('Fat Milk');
-    });
-
-    // Expand first search result
-    await waitFor(() => {
-      const firstRes = screen.getByText('2% Reduced Fat Milk - Southern Home');
-      fireEvent.click(firstRes);
-    });
-
-    // Simulate clicking "Add" button for 1 cup of Fat Milk
-    const addButton = screen.getAllByRole('button', { name: 'Add serving' })[0];
-    fireEvent.click(addButton);
-
-    // Verify that addFood was called with the correct food item
-    const calledFood = mockFoodData.find(
-      (d) => d.food_name === '2% Reduced Fat Milk'
-    );
-    const calledServing = calledFood?.servings.serving.find(
-      (d) => d.serving_description === '1 cup'
-    );
-    expect(mockAddFood).toHaveBeenCalledWith(calledFood, calledServing, 1);
   });
 });

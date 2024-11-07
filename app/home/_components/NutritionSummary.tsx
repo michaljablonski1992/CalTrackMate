@@ -15,7 +15,7 @@ export default function NutritionSummary() {
   const foodCtx = useFoodContext();
   let content;
 
-  if (!foodCtx.foodsLoading) {
+  if (!foodCtx.foodFetching) {
     // Create a new object with empty string values
     const values = Object.keys(servingValuesUnits).reduce<
       Record<string, string>

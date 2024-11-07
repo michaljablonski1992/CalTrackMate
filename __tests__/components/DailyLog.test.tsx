@@ -5,7 +5,6 @@ import '@testing-library/jest-dom';
 import DailyLog from '@/app/home/_components/DailyLog/DailyLog';
 import { useFoodContext } from '@/context/FoodContext';
 import { mockAddedFoodsData } from '@/__tests__/mocks/_mockFoodData';
-import { log } from 'console';
 
 // Mock the useFoodContext hook
 jest.mock('@/context/FoodContext', () => ({
@@ -62,9 +61,14 @@ describe('DailyLog component', () => {
     rows.slice(1).forEach((row, index) => {
       const expectedRow = expectedRows[index];
       const cells = within(row).getAllByRole('cell');
+      // Map over cells to get either textContent or input value
+      const cellValues = cells.map((cell) => {
+        const input = cell.querySelector('input'); // Check if cell contains an input
+        return input ? (input as HTMLInputElement).value : cell.textContent;
+      });
 
-      cells.forEach((cell, index) => {
-        expect(cell).toHaveTextContent(expectedRow[index]);
+      cellValues.forEach((val, index) => {
+        expect(val).toEqual(expectedRow[index]);
       });
     });
   });

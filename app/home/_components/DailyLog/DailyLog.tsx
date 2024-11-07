@@ -51,13 +51,13 @@ export default function DailyLog() {
         labelIcon={FileClockIcon}
         gridClasses="lg:col-span-4 lg:row-span-2"
       >
-        {foodCtx.foodsLoading && <Spinner />}
-        {!foodCtx.foodsLoading && foodCtx.foods.length === 0 && (
+        {foodCtx.foodFetching && <Spinner />}
+        {!foodCtx.foodFetching && foodCtx.foods.length === 0 && (
           <CardInfo text="There are no entries in log yet" icon={ScrollIcon} />
         )}
-        {!foodCtx.foodsLoading && foodCtx.foods.length > 0 && (
+        {!foodCtx.foodFetching && foodCtx.foods.length > 0 && (
           <ScrollArea type="always">
-            <DailyLogTable foods={foodCtx.foods} removeRecordClickHandler={removeRecordClickHandler} />
+            <DailyLogTable removeRecordClickHandler={removeRecordClickHandler} />
           </ScrollArea>
         )}
       </CardWrapper>

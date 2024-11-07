@@ -1,15 +1,7 @@
 import { FatsecretFood, FatsecretServing } from '@/lib/fatsecret/api';
-import { useFoodContext } from '@/context/FoodContext';
 import CollapsibleWrapper from '@/components/shared/CollapsibleWrapper';
-import TooltipWrapper, {
-  TooltipWrapperMods,
-  TooltipWrapperTypes,
-  TooltipWrapperSides
-} from '@/components/shared/TooltipWrapper';
-import { BadgePlusIcon } from 'lucide-react';
-import { foodDisplayName, INPUT_MAX_DECIMALS } from '@/lib/fatsecret/api';
-import { Input } from '@/components/ui/input';
-import { useRef, useState } from 'react';
+import { foodDisplayName } from '@/lib/fatsecret/api';
+import ServingQtyInput from '../shared/ServingQtyInput';
 
 interface Props {
   food: FatsecretFood;
@@ -48,80 +40,14 @@ const FoodSearchResultServing = ({
   food,
   serving,
 }: FoodSearchResultServingProps) => {
-  const foodCtx = useFoodContext();
-  const qtyInputRef = useRef<HTMLInputElement>(null);
-  const [qty, setQty] = useState<string>('1');
-  const [qtyError, setQtyError] = useState<string>('');
-
-  const onAddFoodHandler = (food: FatsecretFood, serving: FatsecretServing) => {
-    // Ignore input if more than 4 digits after the decimal
-    const parts = qty.toString().split('.');
-    if (parts[1] && parts[1].length > INPUT_MAX_DECIMALS) {
-      setQtyError('Invalid value');
-      return;
-    }
-
-    // Validate if is number  
-    if (isNaN(parseFloat(qty))) {
-      setQtyError('Invalid value');
-      return;
-    }
-
-    // all good, add food
-    foodCtx.addFood(food, serving, parseFloat(qty));
-  };
-
-  const onQtyChangeHandler = () => {
-    setQtyError('');
-    let inputValue = qtyInputRef.current!.value;
-
-    // Ignore input if more than 4 digits after the decimal
-    const parts = inputValue.split('.');
-    if (parts[1] && parts[1].length > INPUT_MAX_DECIMALS) {
-      return;
-    }
-
-    // Remove leading zeros from integers (except if the user just types '0')
-    if (/^0[0-9]+$/.test(inputValue) && inputValue !== '0') {
-      inputValue = inputValue.replace(/^0+/, '');
-      qtyInputRef.current!.value = inputValue;
-    }
-
-    // Handle empty input
-    const val = inputValue === '' ? '0' : inputValue;
-    setQty(val);
-  };
-
   return (
     <li className="ml-6 mb-2 flex justify-between items-center">
       <span className="text-bold-muted">{serving.serving_description}</span>
       <div className="flex justify-end gap-4">
         <span className="flex gap-2">
           x
-          <TooltipWrapper
-            mode={TooltipWrapperMods.Manual}
-            type={TooltipWrapperTypes.Danger}
-            side={TooltipWrapperSides.Right}
-            tooltipContent={qtyError}
-            open={!!qtyError}
-          >
-            <Input
-              ref={qtyInputRef}
-              type="number"
-              value={qty}
-              onChange={onQtyChangeHandler}
-              className="w-16 text-center .arrows-hidden"
-            />
-          </TooltipWrapper>
+          <ServingQtyInput food={food} serving={serving} />
         </span>
-        <TooltipWrapper tooltipContent="Add serving">
-          <button
-            aria-label="Add serving"
-            onClick={() => onAddFoodHandler(food, serving)}
-          >
-            <BadgePlusIcon className="hover:cursor-pointer text-primary" />
-          </button>
-        </TooltipWrapper>
       </div>
     </li>
   );
