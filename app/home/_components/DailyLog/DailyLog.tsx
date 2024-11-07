@@ -10,7 +10,7 @@ import Spinner from '@/components/shared/Spinner';
 import DailyLogLabel from './DailyLogLabel';
 import { useState } from 'react';
 import RemoveRecordDialog from './RemoveRecordDialog';
-import DailyLogFood from './DailyLogFood';
+import DailyLogTable from './DailyLogTable';
 
 export type itemToDeleteTypes = [] | [FatsecretFood, FatsecretServing?];
 
@@ -57,11 +57,7 @@ export default function DailyLog() {
         )}
         {!foodCtx.foodsLoading && foodCtx.foods.length > 0 && (
           <ScrollArea type="always">
-            <ul className="list-disc ml-5">
-              {foodCtx.foods.map((food) => (
-                <DailyLogFood key={food.food_id} food={food} removeRecordClickHandler={removeRecordClickHandler}/>
-              ))}
-            </ul>
+            <DailyLogTable foods={foodCtx.foods} removeRecordClickHandler={removeRecordClickHandler} />
           </ScrollArea>
         )}
       </CardWrapper>
