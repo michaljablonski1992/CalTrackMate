@@ -1,4 +1,4 @@
-import { AppleIcon } from 'lucide-react';
+import { AppleIcon, ChartNoAxesCombinedIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -28,6 +28,14 @@ export const useNavigation = () => {
         href: '/home',
         icon: <AppleIcon />,
         active: pathname.startsWith('/home'),
+      },
+      {
+        id: 'analytics',
+        type: Types.Main,
+        name: 'Analytics',
+        href: '/analytics',
+        icon: <ChartNoAxesCombinedIcon />,
+        active: pathname.startsWith('/analytics'),
       },
     ];
     return _paths;

@@ -4,11 +4,16 @@ import { getUserByClerkId } from './_utils';
 import { getTodayDate } from '../lib/utils';
 import { ConvexError } from 'convex/values';
 
+export interface FatsecretFoodData extends FatsecretFood {
+  date: string;
+}
+
 export const upsert = mutation(
-  async (ctx, { food, date }: { food: FatsecretFood, date?: string }) => {
+  async (ctx, { food, date }: { food: FatsecretFood; date?: string }) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) throw new ConvexError('User not authenticated');
-    // get current user from convex
+
+    // Get the current user from Convex
     const currentUser = await getUserByClerkId(ctx, user.subject);
     if (!currentUser) throw new ConvexError('User not found');
 
@@ -18,13 +23,8 @@ export const upsert = mutation(
     // Check if a food item exists
     const existingFood = await ctx.db
       .query('foods')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('food_id'), food.food_id),
-          q.eq(q.field('date'), date),
-          q.eq(q.field('user_id'), currentUser._id)
-        )
-      )
+      .withIndex('by_user_date', (q) => q.eq('user_id', currentUser._id).eq('date', date))
+      .filter((q) => q.eq(q.field('food_id'), food.food_id))
       .first();
 
     if (existingFood) {
@@ -47,53 +47,68 @@ export const getAll = query(
   async (ctx, { date }: { date?: string }) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) throw new ConvexError('User not authenticated');
-    // get current user from convex
+
+    // Get the current user from Convex
     const currentUser = await getUserByClerkId(ctx, user.subject);
     if (!currentUser) throw new ConvexError('User not found');
 
     // Use today's date if not specified
     date ??= getTodayDate();
 
-    const foods: FatsecretFood[] = await ctx.db
+    // Query using 'by_user_date' index for efficient filtering by user and date
+    const foods: FatsecretFoodData[] = await ctx.db
       .query('foods')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('date'), date),
-          q.eq(q.field('user_id'), currentUser._id)
-        )
-      )
+      .withIndex('by_user_date', (q) => q.eq('user_id', currentUser._id).eq('date', date))
       .collect();
 
-    return foods
+    return foods;
   }
 );
 
-
-export const remove = mutation(
-  async (ctx, { food, date }: { food: FatsecretFood, date?: string }) => {
+export const getAllForRange = query(
+  async (ctx, { startDate, endDate }: { startDate: string; endDate: string }) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) throw new ConvexError('User not authenticated');
-    // get current user from convex
+
+    // Get the current user from Convex
+    const currentUser = await getUserByClerkId(ctx, user.subject);
+    if (!currentUser) throw new ConvexError('User not found');
+
+    // Query using 'by_user_date' index, then filter by date range in memory
+    const foods: FatsecretFoodData[] = await ctx.db
+      .query('foods')
+      .withIndex('by_user_date', (q) => q.eq('user_id', currentUser._id))
+      .filter((q) =>
+        q.and(q.gte(q.field('date'), startDate), q.lte(q.field('date'), endDate))
+      )
+      .collect();
+
+    return foods;
+  }
+);
+
+export const remove = mutation(
+  async (ctx, { food, date }: { food: FatsecretFood; date?: string }) => {
+    const user = await ctx.auth.getUserIdentity();
+    if (!user) throw new ConvexError('User not authenticated');
+
+    // Get the current user from Convex
     const currentUser = await getUserByClerkId(ctx, user.subject);
     if (!currentUser) throw new ConvexError('User not found');
 
     // Use today's date if not specified
     date ??= getTodayDate();
 
-    // Check if a food item exists
+    // Use the 'by_user_date' index to check if the food item exists
     const existingFood = await ctx.db
       .query('foods')
-      .filter((q) =>
-        q.and(
-          q.eq(q.field('food_id'), food.food_id),
-          q.eq(q.field('date'), date),
-          q.eq(q.field('user_id'), currentUser._id)
-        )
-      )
+      .withIndex('by_user_date', (q) => q.eq('user_id', currentUser._id).eq('date', date))
+      .filter((q) => q.eq(q.field('food_id'), food.food_id))
       .first();
 
     if (!existingFood) throw new ConvexError('Food not found');
 
-    await ctx.db.delete(existingFood._id)
+    // Delete the existing food item
+    await ctx.db.delete(existingFood._id);
   }
 );

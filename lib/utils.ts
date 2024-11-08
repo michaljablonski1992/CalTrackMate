@@ -1,5 +1,11 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { FatsecretFood } from './fatsecret/api';
+import { FatsecretFoodData } from '@/convex/food';
+import {
+  FatsecretServingValues,
+  servingValuesUnits,
+} from '@/lib/fatsecret/api';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,4 +52,45 @@ export function datetimeToDate(datetime: Date) {
 
 export function dateToDatetime(date: string) {
   return new Date(date);
+}
+
+export function getNutritionValues(
+  foods: FatsecretFood[] | FatsecretFoodData[],
+  withUnits?: boolean
+) {
+  // Create a new object with empty string values
+  const values = Object.keys(servingValuesUnits).reduce<Record<string, string>>(
+    (acc, key) => {
+      acc[key] = '';
+      return acc;
+    },
+    {}
+  );
+
+  // using values object keys calculate for each key sum from all foods -> servings
+  Object.keys(values).forEach((key) => {
+    const sum = foods.reduce((food_sum, food) => {
+      const serving_sum = food.servings.serving.reduce(
+        (serving_sum, serving) => {
+          const serving_val = serving[key as keyof FatsecretServingValues];
+          return (
+            serving_sum +
+            (serving_val
+              ? parseFloat(serving_val) * (serving.quantity || 1)
+              : 0)
+          );
+        },
+        0
+      );
+      return food_sum + serving_sum;
+    }, 0);
+
+    let sumStr = sum.toFixed(2)
+    if(withUnits) {
+      sumStr += servingValuesUnits[key as keyof FatsecretServingValues]
+    }
+    values[key as keyof FatsecretServingValues] = sumStr;
+  });
+
+  return values;
 }
