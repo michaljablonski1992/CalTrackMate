@@ -19,6 +19,13 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: 'CalTrackMate',
   description: 'Nutrition calculator app using Fatsecret API',
+  generator: "Next.js",
+  manifest: "/manifest.json",
+  authors: [{ name: "5lab" }],
+  icons: [
+    { rel: "apple-touch-icon", url: "icon-192x192.png" },
+    { rel: "icon", url: "icon-192x192.png" },
+  ],
 };
 
 export default function RootLayout({

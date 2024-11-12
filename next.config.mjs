@@ -1,3 +1,5 @@
+import withPWA from "./lib/next-pwa-wrapper.cjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
@@ -12,4 +14,11 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const PWAWrapper = withPWA({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+  register: true,
+  skipWaiting: true,
+});
+
+export default PWAWrapper(nextConfig);
