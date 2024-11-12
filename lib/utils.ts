@@ -1,11 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { FatsecretFood, FatsecretServing } from './fatsecret/api';
-import { FatsecretFoodData } from '../convex/food';
 import {
+  FatsecretFood,
+  FatsecretServing,
   FatsecretServingValues,
   servingValuesUnits,
-} from '../lib/fatsecret/api';
+} from './fatsecret/api';
+import { FatsecretFoodData } from '../convex/food';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -85,9 +86,9 @@ export function getNutritionValues(
       return food_sum + serving_sum;
     }, 0);
 
-    let sumStr = sum.toFixed(2)
-    if(withUnits) {
-      sumStr += servingValuesUnits[key as keyof FatsecretServingValues]
+    let sumStr = sum.toFixed(2);
+    if (withUnits) {
+      sumStr += servingValuesUnits[key as keyof FatsecretServingValues];
     }
     values[key as keyof FatsecretServingValues] = sumStr;
   });
