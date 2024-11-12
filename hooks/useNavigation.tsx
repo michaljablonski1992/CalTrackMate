@@ -1,4 +1,4 @@
-import { AppleIcon, ChartNoAxesCombinedIcon } from 'lucide-react';
+import { AppleIcon, ChartNoAxesCombinedIcon, MonitorSmartphoneIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -36,6 +36,14 @@ export const useNavigation = () => {
         href: '/analytics',
         icon: <ChartNoAxesCombinedIcon />,
         active: pathname.startsWith('/analytics'),
+      },
+      {
+        id: 'installation',
+        type: Types.Other,
+        name: 'Installation',
+        href: '/installation',
+        icon: <MonitorSmartphoneIcon />,
+        active: pathname === '/installation',
       },
     ];
     return _paths;
