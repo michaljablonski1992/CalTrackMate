@@ -1,6 +1,8 @@
+'use client';
+
 import ErrorPageWrapper from '@/components/shared/ErrorPageWrapper';
 
-export default function ServerError() {
+export default function GlobalError() {
   return (
     <ErrorPageWrapper
       title="500"
