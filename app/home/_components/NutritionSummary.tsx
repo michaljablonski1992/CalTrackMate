@@ -39,6 +39,7 @@ export default function NutritionSummary() {
       label="Nutrition Summary"
       labelIcon={NotebookTextIcon}
       gridClasses="lg:row-span-2 lg:col-span-4"
+      contentClasses='h-80'
     >
       {content}
     </CardWrapper>

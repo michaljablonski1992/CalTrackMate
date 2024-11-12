@@ -50,6 +50,10 @@ body {
   background-color: hsl(var(--primary));
 }
 
+.recharts-legend-wrapper > div {
+  flex-wrap: wrap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

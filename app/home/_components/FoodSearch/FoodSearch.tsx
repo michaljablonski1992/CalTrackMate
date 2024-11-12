@@ -35,6 +35,7 @@ export default function FoodSearch() {
       label="Add Food"
       labelIcon={UtensilsCrossedIcon}
       gridClasses="lg:row-span-4 lg:col-span-2"
+      contentClasses='h-96'
       titleContent={
         !foodCtx.foodFetching && (
           <form onSubmit={handleSearch}>

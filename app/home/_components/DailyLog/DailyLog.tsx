@@ -50,6 +50,7 @@ export default function DailyLog() {
         label={<DailyLogLabel />}
         labelIcon={FileClockIcon}
         gridClasses="lg:col-span-4 lg:row-span-2"
+        contentClasses='h-96'
       >
         {foodCtx.foodFetching && <Spinner />}
         {!foodCtx.foodFetching && foodCtx.foods.length === 0 && (

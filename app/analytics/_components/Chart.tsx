@@ -42,7 +42,7 @@ const Chart = () => {
     <CardWrapper
       label="Nutritional Data Overview"
       labelIcon={TrendingUpDownIcon}
-      gridClasses="lg:row-span-7"
+      gridClasses="lg:row-span-8 lg:col-span-10 lg:row-start-3"
     >
       {analyticsCtx.dataIsFetching && <Spinner />}
       {!analyticsCtx.dataIsFetching &&

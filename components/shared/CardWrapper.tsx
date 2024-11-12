@@ -5,7 +5,8 @@ interface Props {
   label: React.ReactNode;
   labelIcon: LucideIcon;
   titleContent?: React.ReactNode;
-  gridClasses: string;
+  gridClasses?: string;
+  contentClasses?: string;
   children: React.ReactNode;
 }
 function CardWrapper({
@@ -13,10 +14,11 @@ function CardWrapper({
   labelIcon: LabelIcon,
   titleContent,
   gridClasses,
+  contentClasses,
   children,
 }: Props): React.ReactElement {
   return (
-    <Card className={`flex flex-col w-full h-full rounded-xl ${gridClasses}`}>
+    <Card className={`flex flex-col w-full h-full rounded-xl ${gridClasses || ''}`}>
       <CardHeader className='flex flex-col'>
         <CardTitle className="text-primary">
           <div className="flex items-center gap-2">
@@ -27,7 +29,7 @@ function CardWrapper({
         {titleContent}
       </CardHeader>
       <CardContent className='flex-grow lg:min-h-0 lg:max-h-full overflow-auto'>
-        <div className={`grid gap-3 grid-flow-col lg:h-full h-96`}>
+        <div className={`grid gap-3 grid-flow-col lg:h-full ${contentClasses || ''}`}>
           {children}
         </div>
       </CardContent>
