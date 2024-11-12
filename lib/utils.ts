@@ -1,11 +1,11 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { FatsecretFood } from './fatsecret/api';
-import { FatsecretFoodData } from '@/convex/food';
+import { FatsecretFood, FatsecretServing } from './fatsecret/api';
+import { FatsecretFoodData } from '../convex/food';
 import {
   FatsecretServingValues,
   servingValuesUnits,
-} from '@/lib/fatsecret/api';
+} from '../lib/fatsecret/api';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -71,7 +71,7 @@ export function getNutritionValues(
   Object.keys(values).forEach((key) => {
     const sum = foods.reduce((food_sum, food) => {
       const serving_sum = food.servings.serving.reduce(
-        (serving_sum, serving) => {
+        (serving_sum: number, serving: FatsecretServing) => {
           const serving_val = serving[key as keyof FatsecretServingValues];
           return (
             serving_sum +
