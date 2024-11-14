@@ -2,7 +2,7 @@
 const FatsecretWebBadge = () => {
   return (
     <div>
-      <a href="https://www.fatsecret.com">
+      <a href="https://www.fatsecret.com" target="_blank">
         <img
           src="https://platform.fatsecret.com/api/static/images/powered_by_fatsecret.svg"
           alt="Powered by fatsecret"
