@@ -11,6 +11,7 @@ import CardInfo from '@/components/shared/CardInfo';
 import FoodSearchSkeleton from './FoodSearchSkeleton';
 import { useFoodContext } from '@/context/FoodContext';
 import Spinner from '@/components/shared/Spinner';
+import FatsecretWebBadge from '../shared/FatsecretWebBadge';
 
 export default function FoodSearch() {
   const foodCtx = useFoodContext();
@@ -32,10 +33,15 @@ export default function FoodSearch() {
 
   return (
     <CardWrapper
-      label="Add Food"
+      label={
+        <div className='flex grow justify-between'>
+          <span>Add Food</span>
+          <FatsecretWebBadge />
+        </div>
+      }
       labelIcon={UtensilsCrossedIcon}
       gridClasses="lg:row-span-4 lg:col-span-2"
-      contentClasses='h-96'
+      contentClasses="h-96"
       titleContent={
         !foodCtx.foodFetching && (
           <form onSubmit={handleSearch}>
