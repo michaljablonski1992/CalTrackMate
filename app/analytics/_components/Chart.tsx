@@ -18,7 +18,6 @@ import {
   servingValuesUnits,
 } from '@/lib/fatsecret/api';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
-import { ScrollBar } from '@/components/ui/scroll-area';
 
 const Chart = () => {
   const analyticsCtx = useAnalyticsContext();
