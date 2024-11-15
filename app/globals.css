@@ -44,8 +44,7 @@ body {
   scrollbar-width: none; /* Firefox */
 }
 
-.customGroup .data-\[state\=on\]\:bg-accent[data-state='on'],
-.customGroup button:hover {
+.customGroup button.data-\[state\=on\]\:bg-accent[data-state='on'] {
   color: hsl(var(--primary-foreground));
   background-color: hsl(var(--primary));
 }

@@ -28,9 +28,9 @@ const DailyLogTable = ({ removeRecordClickHandler }: Props) => {
     <Table aria-label="Foods table">
       <TableHeader>
         <TableRow>
-          <TableHead className='w-96'>Name</TableHead>
+          <TableHead className='lg:w-96'>Name</TableHead>
           <TableHead>Brand</TableHead>
-          <TableHead className='w-48'>Quantity</TableHead>
+          <TableHead className='lg:w-48'>Quantity</TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>
@@ -41,7 +41,7 @@ const DailyLogTable = ({ removeRecordClickHandler }: Props) => {
               <TableCell className="font-semibold">{food.food_name}</TableCell>
               <TableCell className="font-semibold">{food.brand_name}</TableCell>
               <TableCell></TableCell>
-              <TableCell className="text-right pr-6">
+              <TableCell className="text-right lg:pr-6">
                 <DailyLogRemoveIcon
                   ariaLabel="Remove food"
                   className="w-6 h-6"
@@ -52,7 +52,7 @@ const DailyLogTable = ({ removeRecordClickHandler }: Props) => {
             {food.servings.serving.map((serving) => {
               return (
                 <TableRow key={serving.serving_id}>
-                  <TableCell className="font-medium pl-12">
+                  <TableCell className="font-medium lg:pl-12 pl-7">
                     {serving.serving_description}
                   </TableCell>
                   <TableCell></TableCell>
@@ -63,7 +63,7 @@ const DailyLogTable = ({ removeRecordClickHandler }: Props) => {
                       mode={QTY_INPUT_MODS.EDIT}
                     />
                   </TableCell>
-                  <TableCell className="text-right pr-6">
+                  <TableCell className="text-right lg:pr-6">
                     <DailyLogRemoveIcon
                       ariaLabel="Remove serving"
                       className="w-6 h-6"
