@@ -5,7 +5,7 @@ CalTrackMate is a comprehensive nutrition calculator designed to help users trac
 ## Features
 
 - **Food Search**: Easily search for food items and serving sizes through the Fatsecret API.
-- **Daily NutritionLogging**: Track calories and nutrients consumed each day.
+- **Daily Nutrition Logging**: Track calories and nutrients consumed each day.
 - **Date Range Analytics**: View detailed nutrition summaries and trends across specified date ranges.
 - **Nutrition Summary**: Get a daily overview of your calorie intake, macros, and key nutrients.
 - **Responsive Web App**: Fully responsive, providing a seamless experience on desktop and mobile.
