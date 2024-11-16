@@ -11,6 +11,7 @@ import {
   FatsecretFood,
   FatsecretServing,
   INPUT_MAX_DECIMALS,
+  INPUT_MAX_VALUE,
 } from '@/lib/fatsecret/api';
 import { roundTo, getCurrentDate } from '@/lib/utils';
 import { convexClient } from '@/providers/ConvexClientProvider';
@@ -83,6 +84,9 @@ export function FoodProvider({ children }: { children: React.ReactNode }) {
       setQty?: boolean
     ) => {
       let updatedFood: FatsecretFood | null = null;
+
+      // qty must not be greater than INPUT_MAX_VALUE
+      qty = Math.min(qty, INPUT_MAX_VALUE);
 
       setFoods((prevFoods) => {
         // Make a deep copy of the previous foods array

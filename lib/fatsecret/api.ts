@@ -86,6 +86,7 @@ export interface FatsecretResponseData {
 //// CONSTS
 export const INPUT_MAX_DECIMALS: number = 4;
 export const MAX_RESULTS: number = 20;
+export const INPUT_MAX_VALUE: number = 1000;
 
 
 //// HELPERS

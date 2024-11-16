@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { FoodProvider, useFoodContext } from '@/context/FoodContext';
-import { FatsecretFoodType } from '@/lib/fatsecret/api';
+import { FatsecretFoodType, INPUT_MAX_VALUE } from '@/lib/fatsecret/api';
 import { act } from 'react';
 import {
   mockAddedFoodsData,
@@ -19,6 +19,7 @@ jest.mock('@/providers/ConvexClientProvider', () => ({
 }));
 beforeEach(() => {
   (convexClient.mutation as jest.Mock).mockReturnValue([]);
+  (convexClient.query as jest.Mock).mockReturnValue([]);
 });
 
 // wrapper for context and context itself
@@ -194,6 +195,31 @@ test('addFood adds food to foods', () => {
   expect(result.current.foods).toEqual([food1, food2]);
 });
 
+test('addFood adds food to foods but quantity not greater than INPUT_MAX_VALUE', () => {
+  const { result } = renderHook(() => useFoodContext(), { wrapper });
+
+  // empty initially
+  expect(result.current.foods.length).toBe(0);
+
+  // get foods and servings to add
+  const mockFood1 = mockFoodData.find(
+    (d) => d.food_name === '2% Reduced Fat Milk'
+  );
+  const mockServing1 = mockFood1?.servings.serving.find(
+    (d) => d.serving_description === '1 cup'
+  );
+
+  // add first serving of first food to foods
+  act(() => {
+    result.current.addFood(mockFood1!, mockServing1!, INPUT_MAX_VALUE + 0.0001);
+  });
+
+  // expect 1 food and 1 serving added with max qty of INPUT_MAX_VALUE
+  expect(result.current.foods.length).toEqual(1);
+  expect(result.current.foods[0].servings.serving.length).toEqual(1);
+  expect(result.current.foods[0].servings.serving[0].quantity).toEqual(INPUT_MAX_VALUE);
+});
+
 test('removeFood removes food from foods', async () => {
   (convexClient.query as jest.Mock).mockReturnValue(mockAddedFoodsData);
   // Mock the return value of useFoodContext to provide the mock foods
@@ -297,9 +323,9 @@ test('addFood with setQty flag sets quantity to provided value', async () => {
   // Expect quantity of serving has changed
   expect(changedServing?.quantity).toEqual(initQty * 3);
 
-  // Change quantity 1 more time to some another value
+  // Change quantity 1 more time to INPUT_MAX_VALUE
   act(() => {
-    result.current.addFood(mockAddedFoodsData1, serving, 1111.11, true)
+    result.current.addFood(mockAddedFoodsData1, serving, INPUT_MAX_VALUE, true)
   });
 
   // Get changed food and serving
@@ -307,5 +333,29 @@ test('addFood with setQty flag sets quantity to provided value', async () => {
   changedServing = changedFood?.servings.serving.find(s => s.serving_id === serving.serving_id);
 
   // Expect quantity of serving has changed
-  expect(changedServing?.quantity).toEqual(1111.11);
+  expect(changedServing?.quantity).toEqual(INPUT_MAX_VALUE);
+
+  // Change quantity 1 more time to some another value
+  act(() => {
+    result.current.addFood(mockAddedFoodsData1, serving, INPUT_MAX_VALUE - 1, true)
+  });
+
+  // Get changed food and serving
+  changedFood = result.current.foods.find(f => f.food_id === mockAddedFoodsData1.food_id);
+  changedServing = changedFood?.servings.serving.find(s => s.serving_id === serving.serving_id);
+
+  // Expect quantity of serving has changed
+  expect(changedServing?.quantity).toEqual(INPUT_MAX_VALUE - 1);
+
+  // Change quantity 1 more time to value greater than INPUT_MAX_VALUE
+  act(() => {
+    result.current.addFood(mockAddedFoodsData1, serving, INPUT_MAX_VALUE + 0.0001, true)
+  });
+
+  // Get changed food and serving
+  changedFood = result.current.foods.find(f => f.food_id === mockAddedFoodsData1.food_id);
+  changedServing = changedFood?.servings.serving.find(s => s.serving_id === serving.serving_id);
+
+  // Expect quantity of serving has changed but not greater than INPUT_MAX_VALUE
+  expect(changedServing?.quantity).toEqual(INPUT_MAX_VALUE);
 });

@@ -9,6 +9,7 @@ import {
   FatsecretFood,
   FatsecretServing,
   INPUT_MAX_DECIMALS,
+  INPUT_MAX_VALUE
 } from '@/lib/fatsecret/api';
 import { BadgePlusIcon, CircleCheckIcon, CircleXIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -75,6 +76,12 @@ const ServingQtyInput = ({ food, serving, mode = MODS.ADD }: Props) => {
     // Validate if is not 0 or less
     if (parseFloat(qty) <= 0) {
       setQtyError('Invalid value');
+      return;
+    }
+
+    // Validate if is not 0 or less
+    if (parseFloat(qty) > INPUT_MAX_VALUE) {
+      setQtyError(`Maximum quantity is: ${INPUT_MAX_VALUE}`);
       return;
     }
 
